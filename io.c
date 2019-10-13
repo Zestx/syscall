@@ -23,15 +23,19 @@ int	exec_ls(char *options)
 int	main(void)
 {
 	int fd;
+	int ret;
+	char buffer[4092];
 
-	exec_ls("-l");
-	creat("new_file", 644);
-	exec_ls("-l");
-	unlink("new_file");
-	exec_ls("-l");
-	creat("new_file", 7000);
-	exec_ls("-l");
-	unlink("new_file");
-	creat("../new_file", 0);
+	unlink("nufile");
+	fd = creat("nufile", 666);
+	if (fd == -1)
+		printf("could not create file\n");
+	fd = open("nufile", O_RDWR);
+	write(fd, "Hello World\n", 13);
+	close(fd);
+	fd = open("nufile", O_RDWR);
+	ret = read(fd, buffer, 14);
+	close(fd);
+	printf("%d[%s]\n", ret, buffer);
 	return 0;
 }
