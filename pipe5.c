@@ -36,9 +36,12 @@ int	main(void)
 		dup2(p[1], STDOUT_FILENO);
 		close(p[0]);
 		close(p[1]);
-		if (execl("/bin/cat", "cat", "pipe4.c", NULL) < 0)
-			exit(EXIT_FAILURE);
-		exit(EXIT_SUCCESS);
+		//no need for testing the return values for error, because
+		//execl will only return in case of error, otherwise the
+		//child will terminate and the following code wont be executed
+		execl("/bin/cat", "cat", "pipe4.c", NULL)
+		perror("exec error: ");
+		exit(EXIT_FAILURE);
 	}
 	/*
 	** forking for grep
@@ -55,9 +58,9 @@ int	main(void)
 		dup2(p[0], STDIN_FILENO);
 		close(p[0]);
 		close(p[1]);
-		if (execl("/bin/grep", "grep", "err_handler", NULL) < 0)
-			exit(EXIT_FAILURE);
-		exit(EXIT_SUCCESS);
+		execl("/bin/grep", "grep", "err_handler", NULL)
+		perror("exec error: ");
+		exit(EXIT_FAILURE);
 	}
 	return 0;
 }
