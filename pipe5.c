@@ -7,6 +7,7 @@
 
 //redirecting the output of a program ('cat' here)
 //to the stdin of another program ('grep' here)
+//DOESN'T WORK
 void	err_handler(char *msg)
 {
 	perror(msg);
@@ -15,7 +16,7 @@ void	err_handler(char *msg)
 
 int	main(void)
 {
-	//creating pipes to communicate between the two child processes
+	//creating a pipe to communicate between the child processes
 	int	p[2];
 	if (pipe(p) < 0)
 		err_handler("pipe error: ");
