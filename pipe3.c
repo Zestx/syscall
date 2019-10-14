@@ -3,14 +3,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
-//Setting a two-ways communication between father and child processes.
+//Setting a one-way communication between father and child processes
+//and remaping stdout of the child
 #define MSG_LEN	14
 #define P_READ	ptop[0]
 #define C_WRITE ptop[1]
 
 int	main(void) 
 {
-	//We declare create two pipes because we need a two-way communications.
+	//we create a pipe
 	int	ptop[2];
 	if (pipe(ptop) < 0) {
 		perror("pipe error: ");
