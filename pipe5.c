@@ -28,7 +28,6 @@ int	main(void)
 		err_handler("fork error: ");
 	if (cat_pid) {
 		close(p[1]);
-		wait(&cat_pid);
 	}
 	if (!cat_pid) {
 		printf("===CAT===\n");
