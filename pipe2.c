@@ -1,36 +1,43 @@
-#include <unistd.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
-#define MSG_SIZE 13
+#define MSG_LEN 12
 
+
+//Setting a one-way communication between father and child processes.
 int	main(void)
 {
-	int	p[2];
-	pid_t	child_pid;
-
-	if (pipe(p) < 0) {
+	//We declare ptoc[2] which is gonna be a array containing the pipe's 
+	//file descriptors (in and out) and then open a PIPE using the pipe() 
+	//system call, which will asign a read-end to ptoc[0] and a write-end to ptoc[1]
+	int	ptoc[2];
+	if (pipe(ptoc) < 0) {
 		perror("pipe error: ");
 		exit(EXIT_FAILURE);
 	}
-
-	child_pid = fork();
-	if (child_pid < 0) {
-		perror("forking failed: ");
+	//We fork our process.
+	pid_t	child_pid;
+	if ((child_pid = fork()) < 0) {
+		perror("fork error: ");
 		exit(EXIT_FAILURE);
 	}
+	//The father process will write in the write-end of the file then close it.
 	if (child_pid > 0) {
-		write(p[1], "Hello Child!", MSG_SIZE);
-		write(p[1], "How u doing?", MSG_SIZE);
-		close(p[1]);
+		write(ptoc[1], "Hello Child!", MSG_LEN);
+		write(ptoc[1], "How u doing?", MSG_LEN);
+		close(ptoc[1]);
 		wait(NULL);
 	}
+	//The child process will close its write-end of the pipe, read in 
+	//the read-end of the pipe, then print it on its stdout.
 	if (child_pid == 0) {
-		close(p[1]);
-		char buff[MSG_SIZE];
-		while (read(p[0], buff, MSG_SIZE) > 0)
-			printf("[%s]\n", buff);
+		close(ptoc[1]);
+		char p_buff[MSG_LEN];
+		while (read(ptoc[0], p_buff, MSG_LEN) > 0)
+			printf("[%s]\n", p_buff);
 	}
 	return 0;
 }
