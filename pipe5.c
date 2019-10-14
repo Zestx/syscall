@@ -7,7 +7,7 @@
 
 //redirecting the output of a program ('cat' here)
 //to the stdin of another program ('grep' here)
-//DOESN'T WORK
+
 void	err_handler(char *msg)
 {
 	perror(msg);
@@ -30,7 +30,6 @@ int	main(void)
 		close(p[1]);
 	}
 	if (!cat_pid) {
-		printf("===CAT===\n");
 		dup2(p[1], STDOUT_FILENO);
 		close(p[0]);
 		close(p[1]);
@@ -44,13 +43,12 @@ int	main(void)
 	if ((grep_pid = fork()) < 0)
 		err_handler("fork_error: ");
 	if (grep_pid)
-		wait(&grep_pid);
+		waitpid(grep_pid, NULL, 0);
 	if (!grep_pid) {
-		printf("===GREP===\n");
 		dup2(p[0], STDIN_FILENO);
 		close(p[0]);
 		close(p[1]);
-		execl("/bin/grep", "grep", "\"err_handler\"", NULL);
+		execl("/bin/grep", "grep", "err_handler", NULL);
 		exit(EXIT_SUCCESS);
 	}
 	return 0;
