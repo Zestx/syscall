@@ -39,7 +39,7 @@ int	main(void)
 		//no need for testing the return values for error, because
 		//execl will only return in case of error, otherwise the
 		//child will terminate and the following code wont be executed
-		execl("/bin/cat", "cat", "pipe4.c", NULL)
+		execl("/bin/cat", "cat", "pipe4.c", NULL);
 		perror("exec error: ");
 		exit(EXIT_FAILURE);
 	}
@@ -58,7 +58,7 @@ int	main(void)
 		dup2(p[0], STDIN_FILENO);
 		close(p[0]);
 		close(p[1]);
-		execl("/bin/grep", "grep", "err_handler", NULL)
+		execl("/bin/grep", "grep", "err_handler", NULL);
 		perror("exec error: ");
 		exit(EXIT_FAILURE);
 	}
