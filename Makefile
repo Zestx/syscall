@@ -14,14 +14,14 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
 NAME = minishell
 INCLUDES = minishell.h
-SRCS = pipe5b.c 
-OBJS = pipe5b.o 
+SRCS = pipe6.c 
+OBJS = pipe6.o 
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
 	make -C ./libft
-	$(CC) $(CFLAGS) $^ -I. ./libft/libft.a -o pipeline
+	$(CC) $(CFLAGS) $^ -I. ./libft/libft.a -o pl
 	rm -rf *.o
 
 $(OBJS): $(SRCS)
@@ -32,7 +32,7 @@ clean:
 	make fclean -C ./libft
 
 fclean: clean
-	rm -rf pipeline
+	rm -rf pl
 
 re: fclean all
 
