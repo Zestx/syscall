@@ -68,6 +68,7 @@ int	execute_cmd(char ***cmd_list, int idx, int limit, int read_fd)
 	} else {
 		close(p[0]);
 		dup2(read_fd, STDIN_FILENO);
+		close(read_fd);
 		dup2(p[1], STDOUT_FILENO);
 		close(p[1]);
 		execvp(cmd_list[idx][0], cmd_list[idx]);
