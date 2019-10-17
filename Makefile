@@ -14,8 +14,8 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
 NAME = minishell
 INCLUDES = minishell.h
-SRCS = pipe6.c 
-OBJS = pipe6.o 
+SRCS = pipe7.c 
+OBJS = pipe7.o 
 
 all: $(NAME)
 
