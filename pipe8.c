@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipe7-rev.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qbackaer <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/01/28 19:26:57 by qbackaer          #+#    #+#             */
+/*   Updated: 2020/01/28 19:34:52 by qbackaer         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
@@ -25,11 +37,23 @@ static int err_handler(char *err_msg)
 	exit(EXIT_FAILURE);
 }
 
-static void execute(char **cmd_list)
+static void execute(char **cmd_args)
 {
-	execvp(cmd_list[0], cmd_list);
+	execvp(cmd_args[0], cmd_args);
 	perror("exec error: ");
 	exit(EXIT_FAILURE);
+}
+
+static void	execute_first(char **cmd_args)
+{
+	pid_t	pid;
+
+	if ((pid = fork()) < 0)
+		err_handler("fork error: ");
+	else if (pid == 0)
+		execute(cmd_args);
+	else if (pid > 0)
+		wait(&pid);
 }
 
 static int execute_cmd(char ***cmd_list, int idx)
@@ -37,8 +61,11 @@ static int execute_cmd(char ***cmd_list, int idx)
 	pid_t	pid;
 	int	p[2];
 
-	if (!idx--)
+	if (!idx)
+	{
+		execute_first(cmd_list[0]);
 		return -1;
+	}
 	if (pipe(p) < 0)
 		err_handler("pipe error: ");
 	if ((pid = fork()) < 0)
@@ -55,7 +82,7 @@ static int execute_cmd(char ***cmd_list, int idx)
 		close(p[OUT]);
 		dup2(p[IN], STDOUT_FILENO);
 		close(p[IN]);
-		execute_cmd(cmd_list, idx);
+		execute_cmd(cmd_list, idx--);
 	}
 	return pid;
 }
@@ -75,14 +102,7 @@ int main(int argc, char **argv)
 		cmd_list[i] = ft_strsplit(argv[i + 1], ' ');
 		i++;
 	}
-	pid = execute_cmd(cmd_list, argc - 1);
-
-	ssize_t n;
-	char buff[4096];
-
-	while ((n = read(0, buff, 4096)) > 0)
-		write(1, buff, n);
-	close(1);
+	pid = execute_cmd(cmd_list, argc - 2);
 	waitpid(pid, &status, 0);
 	return 0;
 }
